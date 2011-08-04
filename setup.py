@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='grappelli-fit',
+    name='grappellifit',
     version='0.1.0',
     description='A Grappelli compatibility layer for popular Django apps',
     author='Maxime Haineault (Motion Média)',
