@@ -6,6 +6,11 @@ if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.admin import TranslationStackedInline as TranslationStackedInlineBase
     from modeltranslation.admin import TranslationGenericTabularInline as TranslationGenericTabularInlineBase
     from modeltranslation.admin import TranslationGenericStackedInline as TranslationGenericStackedInlineBase
+    from modeltranslation.translator import translator, Translator
+
+    def is_registred(self, model):
+        return model in self._registry
+    translator.is_registred = new.instancemethod(is_registred, translator, Translator)
 
     MODEL_TRANSLATION_JS = (
         '%smodeltranslation/js/force_jquery.js' % settings.STATIC_URL,
