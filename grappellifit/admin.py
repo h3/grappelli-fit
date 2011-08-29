@@ -1,3 +1,5 @@
+import new
+
 from django.conf import settings
 
 if 'modeltranslation' in settings.INSTALLED_APPS:
