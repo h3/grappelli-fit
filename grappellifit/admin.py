@@ -11,7 +11,10 @@ if 'modeltranslation' in settings.INSTALLED_APPS:
     from modeltranslation.translator import translator, Translator
 
     def is_registred(self, model):
-        return model in self._registry
+        for registred_model in self._registry:
+            if registred_model.__name__ == model:
+                return True
+        return False
     translator.is_registred = new.instancemethod(is_registred, translator, Translator)
 
     MODEL_TRANSLATION_JS = (
