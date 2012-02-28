@@ -7,14 +7,44 @@ This is an early prototype which currently only support two applications, if it 
 
 Feel free to contribute your compatibility layers for your favourites Django applications !
 
- * View screenshots: http://code.google.com/p/grappelli-fit/wiki/Screenshots
- * Tested applications: http://code.google.com/p/grappelli-fit/wiki/TestedApps
+  * Tested applications: http://code.google.com/p/grappelli-fit/wiki/TestedApps
 
 Currently supported applications
 --------------------------------
 
- * django-rosetta: http://code.google.com/p/grappelli-fit/wiki/Screenshots
+ * django-rosetta: https://github.com/mbi/django-rosetta
  * django-modeltranslation: http://code.google.com/p/django-modeltranslation/
+ * django-fiber (in progress..)
+ * django-locking (eventually..)
+
+Screenshots
+===========
+
+Rosetta
+-------
+
+.. figure:: http://i.imgur.com/Jt4Rp.png
+    :figwidth: image
+
+    Language selection
+
+.. figure:: http://i.imgur.com/2BAjO.png
+    :figwidth: image
+
+    Change form
+
+Modeltranslation
+----------------
+
+.. figure:: http://i.imgur.com/QezPx.png
+    :figwidth: image
+
+    Change list
+
+.. figure:: http://i.imgur.com/xrKot.png
+    :figwidth: image
+
+    Change form
 
 Usage
 =====
