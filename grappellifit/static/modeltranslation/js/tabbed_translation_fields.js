@@ -106,7 +106,7 @@
                 },
 
                 _createTabularInlineTabs: function($parent) {
-                    var container, tabs_container, tabs_list,
+                    var container, tabs_container, tabs_list, default_lang,
                         translations = $self._getTranslatedFields($parent);
                     if ($parent) {
                         container = $($parent).find('.group.tabular');
@@ -119,13 +119,49 @@
 
                     tabs_container.insertAfter(container.find('> .tools'));
                     //tabs_container.appendTo(container.find('.thead'));
-
-                    $.each(mt.languages, function (i, lang) {
-                        $('<li><a id="tab_'+ lang +'" href="#' + i + '">' + lang + '</a></li>').appendTo(tabs_list);
-                    });
             
+                    $.each(mt.languages, function (i, lang) {
+                        if (i == 0) {
+                            default_lang = lang;
+                        }
+                        var id = 'tab_'+ container.attr('id').replace('set-group', lang);
+                        $('<li><a href="#' + id + '">' + lang + '</a></li>')
+                            .appendTo(tabs_list)
+                            .find('a').bind('click', function() {
+                                console.log($(this));
+                                return false;
+                            });
+                    });
+
+                    container.find('.thead .th').each(function(i, th){
+                        var classes = $(th).attr('class').split(' ');
+                        $.each(classes, function(x, classname){
+                            if ($.inArray(classname.slice(-2), mt.languages) > -1 && classname.slice(-3, -2) == '-') {
+                                var c = "tab_"+ container.attr('id').replace('set-group', classname.slice(-2));
+                                $(th).addClass(c);
+                                if (classname.slice(-2) != default_lang) {
+                                    $(th).hide();
+                                }
+                            }
+                        });
+                        
+                    });
+
                     tabs_container.tabs();
                    //tabs.push(tabs_container);
+                    $.each(translations, function (name, languages) {
+                        $.each(languages, function(lang, el){
+                            var p = $(el).parent();
+                            var classname = container.attr('id').replace('set-group', lang);
+                            if (p.hasClass('td')) {
+                                p.addClass('tab_'+classname);
+                            }
+                            if (lang != default_lang) {
+                                p.hide();
+                            }
+                        });
+
+                    });
 
 
                     /*
