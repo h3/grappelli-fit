@@ -26,7 +26,7 @@
 
                         tabs = $self._createInlineTabs();
 
-                        $self._createMainSwitch(tabs, fields);
+                        //$self._createMainSwitch(tabs, fields);
 
                         // Adding new inlines, rebinding events
                         $('.add-item .add-handler').bind('click.modeltranslation', function(){
@@ -107,7 +107,8 @@
 
                 _createTabularInlineTabs: function($parent) {
                     var container, tabs_container, tabs_list, default_lang,
-                        translations = $self._getTranslatedFields($parent);
+                        translations = $self._getTranslatedFields($parent),
+                        tabs = [];
                     if ($parent) {
                         container = $($parent).find('.group.tabular');
                     }
@@ -165,7 +166,7 @@
                     });
 
                     tabs_container.tabs();
-                   //tabs.push(tabs_container);
+                    tabs.push(tabs_container);
                     $.each(translations, function (name, languages) {
                         $.each(languages, function(lang, el){
                             var p = $(el).parent();
@@ -179,48 +180,7 @@
                         });
 
                     });
-
-
-                    /*
-                    var tabs = [],
-                        translations = this._getTranslatedFields($parent);
-                    $.each(translations, function (name, languages) {
-                        console.log(name, languages)
-                        var tabs_container = $('<div class="modeltranslation-switcher-container"></div>'),
-                          tabs_list = $('<ul class="modeltranslation-switcher"></ul>'),
-                          insertion_point;
-                        tabs_container.append(tabs_list);
-                        $.each(languages, function (lang, el) {
-                            if (!$(el).parent().hasClass('.td')) {
-                                var container = $(el).closest('.row'),
-                                  label = $('label', container),
-                                  field_label = container.find('label'),
-                                  id = 'tab_' + [name, lang].join('_'),
-                                  panel, tab;
-                                // Remove language and brackets from field label, they are
-                                // displayed in the tab already.
-                                if (field_label.html()) {
-                                    field_label.html(field_label.html().replace(/\ \[.+\]/, ''));
-                                }
-                                if (!insertion_point) {
-                                    insertion_point = {
-                                        'insert': container.prev().length ? 'after' : container.next().length ? 'prepend' : 'append',
-                                        'el': container.prev().length ? container.prev() : container.parent()
-                                    };
-                                }
-                                container.find('script').remove();
-                                panel = $('<div id="' + id + '"></div>').append(container);
-                                tab = $('<li' + (label.hasClass('required') ? ' class="required"' : '') + '><a href="#' + id + '">' + lang + '</a></li>');
-                                tabs_list.append(tab);
-                                tabs_container.append(panel);
-                            }
-                        });
-                        insertion_point.el[insertion_point.insert](tabs_container);
-                        tabs_container.tabs();
-                        tabs.push(tabs_container);
-                    });
                     return tabs;
-                    */
                 },
 
                 // Create change form tabbing
