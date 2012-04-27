@@ -116,6 +116,7 @@
                     }
                     tabs_container = $('<div class="modeltranslation-switcher-container"></div>');
                     tabs_list = $('<ul class="modeltranslation-switcher"></ul>').appendTo(tabs_container);
+                    tabs_shim = $('<div style="display:none;" />').appendTo(tabs_container); // can't use real tabs, so we fake them
 
                     tabs_container.insertAfter(container.find('> .tools'));
                     //tabs_container.appendTo(container.find('.thead'));
@@ -128,19 +129,35 @@
                         $('<li><a href="#' + id + '">' + lang + '</a></li>')
                             .appendTo(tabs_list)
                             .find('a').bind('click', function() {
-                                console.log($(this));
+                                var id = $(this).attr('href').replace('#', '');
+                                $.each(mt.languages, function (i, lang) {
+                                    var el = $('.'+ id.slice(0, -2) + lang)
+                                    if (id.slice(-2) != lang) {
+                                        el.hide();
+                                    }
+                                    else {
+                                        el.show();
+                                    }
+                                });
                                 return false;
                             });
+                        $('<div id="'+ id +'" />').appendTo(tabs_shim);
                     });
 
                     container.find('.thead .th').each(function(i, th){
-                        var classes = $(th).attr('class').split(' ');
+                        th = $(th);
+                        var classes = th.attr('class').split(' ');
+                        // Remove language and brackets from field label, they are
+                        // displayed in the tab already.
+                        if (th.html()) {
+                            th.html(th.html().replace(/\ \[.+\]/, ''));
+                        }
                         $.each(classes, function(x, classname){
                             if ($.inArray(classname.slice(-2), mt.languages) > -1 && classname.slice(-3, -2) == '-') {
                                 var c = "tab_"+ container.attr('id').replace('set-group', classname.slice(-2));
-                                $(th).addClass(c);
+                                th.addClass(c);
                                 if (classname.slice(-2) != default_lang) {
-                                    $(th).hide();
+                                    th.hide();
                                 }
                             }
                         });
