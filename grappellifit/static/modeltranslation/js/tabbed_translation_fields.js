@@ -2,43 +2,52 @@
     $(function() {
         $.modeltranslation = (function() {
             var mt = {
+                languages: [],
                 options: {
-                    fieldTypes: 'input[type=text], input[type=file], textarea',
+                    fieldTypes: 'input[type=text], input[type=file], textarea'
                 },
 
                 init: function(opts) {
-                    this.options = $.extend(this.options, opts)
+                    $self = this;
+                    $self.options = $.extend(this.options, opts)
 
                     if ($('body').hasClass('change-form')) {
-                        var fields = this._getTranslatedFields()
-                        var tabs = this._createInlineTabs()
-                        this._createMainSwitch(tabs, fields)
-                        var $self = this
+                        var tabs, group,
+                            fields = $self._getTranslatedFields();
+
+                        // Discover languages
+                        $.each(fields, function (name, languages) {
+                            $.each(languages, function (lang, el) {
+                                if ($.inArray(lang, mt.languages) < 0) {
+                                    mt.languages.push(lang);
+                                }
+                            });
+                        });
+
+                        tabs = $self._createInlineTabs();
+
+                        //$self._createMainSwitch(tabs, fields);
+
+                        // Adding new inlines, rebinding events
                         $('.add-item .add-handler').bind('click.modeltranslation', function(){
-                            var group = $(this).parents('.group')
+                            group = $($self).parents('.group');
                             setTimeout(function(){
-                                $self._createInlineTabs(group.find('.items > .module:last').prev())
-                            }, 200)
-                        })
+                                $self._createInlineTabs(group.find('.items > .module:last').prev());
+                            }, 200);
+                        });
                     }
                     else if ($('body').hasClass('change-list')) {
-                        var tabs = this._createChangelistTabs()
+                        tabs = this._createChangelistTabs();
                     }
                 },
 
                 // Inserts a select box to select language globally
                 _createMainSwitch: function(tabs, fields) {
-                    var grouped_translations = fields,
-                      unique_languages = [],
-                      select = $('<select>');
-                    $.each(grouped_translations, function (name, languages) {
-                        $.each(languages, function (lang, el) {
-                            if ($.inArray(lang, unique_languages) < 0) {
-                                unique_languages.push(lang);
-                            }
-                        });
-                    });
-                    $.each(unique_languages, function (i, language) {
+                    var $self = this,
+                        grouped_translations = fields,
+                        select = $('<select>');
+
+                    $.each(mt.languages, function (i, language) {
                         select.append($('<option value="' + i + '">' + language + '</option>'));
                     });
                     select.change(function (e) {
@@ -96,46 +105,127 @@
                     }
                 },
 
+                _createTabularInlineTabs: function($parent) {
+                    var container, tabs_container, tabs_list, default_lang,
+                        translations = $self._getTranslatedFields($parent),
+                        tabs = [];
+                    if ($parent) {
+                        container = $($parent).find('.group.tabular');
+                    }
+                    else {
+                        container = $('.group.tabular');
+                    }
+                    tabs_container = $('<div class="modeltranslation-switcher-container"></div>');
+                    tabs_list = $('<ul class="modeltranslation-switcher"></ul>').appendTo(tabs_container);
+                    tabs_shim = $('<div style="display:none;" />').appendTo(tabs_container); // can't use real tabs, so we fake them
+
+                    tabs_container.insertAfter(container.find('> .tools'));
+                    //tabs_container.appendTo(container.find('.thead'));
+            
+                    $.each(mt.languages, function (i, lang) {
+                        if (i == 0) {
+                            default_lang = lang;
+                        }
+                        var id = 'tab_'+ container.attr('id').replace('set-group', lang);
+                        $('<li><a href="#' + id + '">' + lang + '</a></li>')
+                            .appendTo(tabs_list)
+                            .find('a').bind('click', function() {
+                                var id = $(this).attr('href').replace('#', '');
+                                $.each(mt.languages, function (i, lang) {
+                                    var el = $('.'+ id.slice(0, -2) + lang)
+                                    if (id.slice(-2) != lang) {
+                                        el.hide();
+                                    }
+                                    else {
+                                        el.show();
+                                    }
+                                });
+                                return false;
+                            });
+                        $('<div id="'+ id +'" />').appendTo(tabs_shim);
+                    });
+
+                    container.find('.thead .th').each(function(i, th){
+                        th = $(th);
+                        var classes = th.attr('class').split(' ');
+                        // Remove language and brackets from field label, they are
+                        // displayed in the tab already.
+                        if (th.html()) {
+                            th.html(th.html().replace(/\ \[.+\]/, ''));
+                        }
+                        $.each(classes, function(x, classname){
+                            if ($.inArray(classname.slice(-2), mt.languages) > -1 && classname.slice(-3, -2) == '-') {
+                                var c = "tab_"+ container.attr('id').replace('set-group', classname.slice(-2));
+                                th.addClass(c);
+                                if (classname.slice(-2) != default_lang) {
+                                    th.hide();
+                                }
+                            }
+                        });
+                        
+                    });
+
+                    tabs_container.tabs();
+                    tabs.push(tabs_container);
+                    $.each(translations, function (name, languages) {
+                        $.each(languages, function(lang, el){
+                            var p = $(el).parent();
+                            var classname = container.attr('id').replace('set-group', lang);
+                            if (p.hasClass('td')) {
+                                p.addClass('tab_'+classname);
+                            }
+                            if (lang != default_lang) {
+                                p.hide();
+                            }
+                        });
+
+                    });
+                    return tabs;
+                },
+
                 // Create change form tabbing
-                _createInlineTabs: function(p) {
-                    var translations = this._getTranslatedFields(p)
-                    var tabs = []
+                _createInlineTabs: function($parent) {
+                    var tabs = [],
+                        translations = this._getTranslatedFields($parent);
                     $.each(translations, function (name, languages) {
                         var tabs_container = $('<div class="modeltranslation-switcher-container"></div>'),
                           tabs_list = $('<ul class="modeltranslation-switcher"></ul>'),
                           insertion_point;
                         tabs_container.append(tabs_list);
                         $.each(languages, function (lang, el) {
-                            var container = $(el).closest('.row'),
-                              label = $('label', container),
-                              field_label = container.find('label'),
-                              id = 'tab_' + [name, lang].join('_'),
-                              panel, tab;
-                            // Remove language and brackets from field label, they are
-                            // displayed in the tab already.
-                            if (field_label.html()) {
-                                field_label.html(field_label.html().replace(/\ \[.+\]/, ''));
+                            if (!$(el).parent().hasClass('.td')) {
+                                var container = $(el).closest('.row'),
+                                  label = $('label', container),
+                                  field_label = container.find('label'),
+                                  id = 'tab_' + [name, lang].join('_'),
+                                  panel, tab;
+                                // Remove language and brackets from field label, they are
+                                // displayed in the tab already.
+                                if (field_label.html()) {
+                                    field_label.html(field_label.html().replace(/\ \[.+\]/, ''));
+                                }
+                                if (!insertion_point) {
+                                    insertion_point = {
+                                        'insert': container.prev().length ? 'after' : container.next().length ? 'prepend' : 'append',
+                                        'el': container.prev().length ? container.prev() : container.parent()
+                                    };
+                                }
+                                container.find('script').remove();
+                                panel = $('<div id="' + id + '"></div>').append(container);
+                                tab = $('<li' + (label.hasClass('required') ? ' class="required"' : '') + '><a href="#' + id + '">' + lang + '</a></li>');
+                                tabs_list.append(tab);
+                                tabs_container.append(panel);
                             }
-                            if (!insertion_point) {
-                                insertion_point = {
-                                    'insert': container.prev().length ? 'after' : container.next().length ? 'prepend' : 'append',
-                                    'el': container.prev().length ? container.prev() : container.parent()
-                                };
-                            }
-                            container.find('script').remove();
-                            panel = $('<div id="' + id + '"></div>').append(container);
-                            tab = $('<li' + (label.hasClass('required') ? ' class="required"' : '') + '><a href="#' + id + '">' + lang + '</a></li>');
-                            tabs_list.append(tab);
-                            tabs_container.append(panel);
                         });
                         insertion_point.el[insertion_point.insert](tabs_container);
                         tabs_container.tabs();
                         tabs.push(tabs_container);
                     });
+                    this._createTabularInlineTabs($parent);
                     return tabs;
                 },
                 
-                _getTranslatedFields: function(p) {
+                _getTranslatedFields: function($parent) {
                     /** Returns a grouped set of all text based model translation fields.
                      * The returned datastructure will look something like this:
                      * {
@@ -149,32 +239,33 @@
                      *   }
                      * }
                      */
-                    if (p) {
-                        var fields = $(p).find('.modeltranslation').filter(this.options.fieldTypes)
+                    var fields,
+                        out    = {},
+                        langs  = [];
+                    if ($parent) {
+                        fields = $($parent).find('.modeltranslation').filter(this.options.fieldTypes);
                     }
                     else {
-                        var fields = $('.modeltranslation').filter(this.options.fieldTypes)
+                        fields = $('.modeltranslation').filter(this.options.fieldTypes);
                     }
-                    var out    = {}
-                    var langs  = []
                     //onAfterAdded
                     
                     fields.each(function (i, el) {
-                        var name = $(el).attr('name').split('_')
-                        var lang = name.pop()
-                        name = name.join('_')
-                        langs.push(lang)
+                        var name = $(el).attr('name').split('_'),
+                            lang = name.pop();
+                        name = name.join('_');
+                        langs.push(lang);
                         if (!/__prefix__/.test(name)) {
                             if (!out[name]) { out[name] = {} }
-                            out[name][lang] = el
+                            out[name][lang] = el;
                         }
                     })
-                    this.options.languages = $.unique(langs.sort())
-                    return out
+                    this.options.languages = $.unique(langs.sort());
+                    return out;
                 }
             }
-            return mt
-        }())
-        $.modeltranslation.init()
+            return mt;
+        }());
+        $.modeltranslation.init();
     })
-}(django.jQuery || jQuery || $))
+}(django.jQuery || jQuery || $));
