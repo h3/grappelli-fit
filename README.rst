@@ -46,6 +46,14 @@ Modeltranslation
 
     Change form
 
+Django-mptt
+----------------
+
+.. figure:: http://i.imgur.com/KShyL.png
+    :figwidth: image
+
+    Change list
+
 Usage
 =====
 
