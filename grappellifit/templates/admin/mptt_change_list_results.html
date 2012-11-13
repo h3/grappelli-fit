@@ -24,7 +24,7 @@
 {% endif %}
 
 {% if results %}
-<div class="module changelist-results">
+<div class="grp-module grp-changelist-results">
     <table cellspacing="0">
         <thead>
             <tr>
@@ -42,7 +42,7 @@
                 {% if result.form.non_field_errors %}
                     <tr><td colspan="{{ result.row|length }}">{{ result.form.non_field_errors }}</td></tr>
                 {% endif %}
-                <tr class="{% cycle 'row1' 'row2' %}">{% for item in result %}{{ item }}{% endfor %}</tr>
+                <tr class="grp-row {% cycle 'grp-row-even' 'grp-row-odd' %}">{% for item in result %}{{ item }}{% endfor %}</tr>
             {% endfor %}
         </tbody>
     </table>
