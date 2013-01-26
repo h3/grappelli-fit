@@ -1,5 +1,7 @@
 (function ($) {
+    console.log('test1')
     $(function() {
+        console.log('test2')
         $.modeltranslation = (function() {
             var mt = {
                 languages: [],
@@ -11,7 +13,7 @@
                     $self = this;
                     $self.options = $.extend(this.options, opts)
 
-                    if ($('body').hasClass('change-form')) {
+                    if ($('body').hasClass('grp-change-form')) {
                         var tabs, group,
                             fields = $self._getTranslatedFields();
 
@@ -36,7 +38,7 @@
                             }, 200);
                         });
                     }
-                    else if ($('body').hasClass('change-list')) {
+                    else if ($('body').hasClass('grp-change-list')) {
                         tabs = this._createChangelistTabs();
                     }
                 },
@@ -78,7 +80,7 @@
                     // Insert toolbar only if there is translated fields
                     if (tabs.find('li').length) {
                         // Tweak table header
-                        $('.changelist-results').find('thead th').each(function(i, t){
+                        $('.grp-changelist-results').find('thead th').each(function(i, t){
                             var th    = $(t)
                             var label = $.trim(th.find('a').text())
                             if (/\[\w{2}\]/.test(label)) {
