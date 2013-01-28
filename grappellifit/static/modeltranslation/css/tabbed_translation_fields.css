@@ -62,11 +62,7 @@
 .grp-submit-row .grp-modeltranslation a {
     opacity: 1!important;
 }
-.grp-submit-row .grp-modeltranslation a:hover {
-    opacity: 0.65!important;
-    background-image: linear-gradient(#4FB2D3, #309BBF);
-    background-size: 100% auto;
-    border: 1px solid #2B8AAB;
+.grp-submit-row .grp-modeltranslation .active a:hover {
     color: #fff;
 }
 
