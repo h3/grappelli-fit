@@ -88,12 +88,18 @@
             var l = $self.langs[x];
             $('<li'+ (x==0 && ' class="active"' || '') +'><a href="javascript://" data-lang="'+ l +'">'+ l +'</a></li>').appendTo(ul);
         }        
-
+        
         $self.mainSwitch.insertAfter($(GRP_PAGE_TOOLS).get(0) && GRP_PAGE_TOOLS || GRP_BREADCRUMBS);
 
-        var ft = $self.mainSwitch.clone().find('a').addClass('grp-button').end();
-        $self.footerSwitch= $('<li class="grp-float-left"></li>').append(ft);
-        $self.footerSwitch.appendTo($(GRP_FOOTER))
+        // We insert the big footer menu only if there is more than one language activated.
+        // The smaller top menu is still displayed for informational purpose only.
+        // It indicate the active language being edited, but it also indicate
+        // that modeltranslation is activated for this model.
+        if ($self.langs.length > 1) {
+            var ft = $self.mainSwitch.clone().find('a').addClass('grp-button').end();
+            $self.footerSwitch= $('<li class="grp-float-left"></li>').append(ft);
+            $self.footerSwitch.appendTo($(GRP_FOOTER));
+        }
 
         $('.grp-modeltranslation a').each(function(x, a){
             var a = $(a);

@@ -50,6 +50,10 @@
     float: left;
 }
 
+.grp-submit-row .grp-modeltranslation li a {
+    float: left;
+    border-radius: 0!important;
+}
 
 .grp-submit-row .grp-modeltranslation li:first-child a {
     border-radius: 5px 0px 0px 5px!important;
