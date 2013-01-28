@@ -62,6 +62,7 @@
 .grp-submit-row .grp-modeltranslation a {
     opacity: 1!important;
 }
+.grp-submit-row .grp-modeltranslation .active a:focus,
 .grp-submit-row .grp-modeltranslation .active a:hover {
     color: #fff;
 }

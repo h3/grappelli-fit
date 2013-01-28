@@ -3,9 +3,10 @@
     var langs = [],
         fields = {};
 
-    var GRP_ROW = '.grp-row';
-    var GRP_BREADCRUMBS = '#grp-breadcrumbs';
-    var GRP_PAGE_TOOLS = '#grp-page-tools';
+    var GRP_ROW = '.grp-row',
+        GRP_BREADCRUMBS = '#grp-breadcrumbs',
+        GRP_PAGE_TOOLS = '#grp-page-tools',
+        GRP_FOOTER = 'footer.grp-submit-row ul';
 
     var modeltranslation = function(){
         this.langs  = ['en']
@@ -90,18 +91,15 @@
 
         $self.mainSwitch.insertAfter($(GRP_PAGE_TOOLS).get(0) && GRP_PAGE_TOOLS || GRP_BREADCRUMBS);
 
-        var footerSwitch = $self.mainSwitch.clone()
-                            .find('a').addClass('grp-button').end();
-        var test = $('<li class="grp-float-left"></li>').append(footerSwitch);
+        var ft = $self.mainSwitch.clone().find('a').addClass('grp-button').end();
+        $self.footerSwitch= $('<li class="grp-float-left"></li>').append(ft);
+        $self.footerSwitch.appendTo($(GRP_FOOTER))
 
-        $('footer.grp-submit-row ul').append(test);
-
-        $self.mainSwitch.find('a').each(function(x, a){
+        $('.grp-modeltranslation a').each(function(x, a){
             var a = $(a);
             a.bind('click', function(e) {
                 e.preventDefault();
                 if (!a.parent().hasClass('active')) {
-                    a.parent().addClass('active').siblings().removeClass('active');
                     $self.activate(a.data('lang'));
                 }
                 return false;
@@ -126,6 +124,14 @@
                 });
             }
         });
+        $self.changed(activateLang);
+    };
+
+    modeltranslation.prototype.changed = function(changedLang){
+        $('.grp-modeltranslation a[data-lang="'+ changedLang +'"]')
+            .parent().addClass('active')
+                .siblings().removeClass('active');
+        
     };
 
     $(function(){
