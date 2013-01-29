@@ -39,9 +39,7 @@
             }
 
             if (!/__prefix__/.test(name)) {
-                $self.fields[lang].push({
-                    name: name, el: $(el)
-                });
+                $self.fields[lang].push({ name: name, el: $(el) });
             }
         });
 
@@ -57,26 +55,17 @@
         var firstLang = $self.langs[0];
 
         $.each($self.fields, function(lang, fields) {
-            // We move translated field below their respective base fields
-            if (lang != firstLang) {
-                $.each(fields, function(x, field){
-                    var base_field_id = '#id_'+ field.name +'_'+ firstLang;
-                    var base_field = $(base_field_id);
-                    var prev = field.el.prev().get(0);
-                    if (!prev || (prev && prev.nodeName != 'INPUT')) {
-                        var p = field.el.parents(GRP_ROW);
-                        field.el.hide().insertAfter(base_field);
-                        p.remove();
-                    }
-                });
-            }
-            // We remove language brackets from base fields' labels
-            else {
-                $.each(fields, function(x, field){
-                    var label = field.el.parents(GRP_ROW).find('label[for="'+ field.el.attr('id') +'"]');
-                    label.text(label.text().replace(/\ \[.+\]/, ''));
-                });
-            }
+            $.each(fields, function(x, field){
+                var base_field_id = '#id_'+ field.name +'_'+ firstLang;
+                var base_field = $(base_field_id);
+                var prev = field.el.prev().get(0);
+                if (!prev || (prev && prev.nodeName != 'INPUT')) {
+                    var p = field.el.parents(GRP_ROW);
+                    field.el.parents('.grp-row').addClass('grp-modeltranslation-'+ lang);
+                }
+                var label = field.el.parents(GRP_ROW).find('label[for="'+ field.el.attr('id') +'"]');
+                label.text(label.text().replace(/\ \[.+\]/, ''));
+            });
         });
     };
 
@@ -123,20 +112,15 @@
 
     modeltranslation.prototype.activate = function(activateLang) {
         var $self = this;
-        $.each($self.fields, function(lang, fields) {
-            // We hide all fields that aren't this lang
+        for (var x in $self.langs) {
+            var lang = $self.langs[x];
             if (lang != activateLang) {
-                $.each(fields, function(x, field){
-                    field.el.hide();
-                });
+                $('.grp-modeltranslation-'+ lang).hide();
             }
-            // We show all fields that are this lang
             else {
-                $.each(fields, function(x, field){
-                    field.el.show();
-                });
+                $('.grp-modeltranslation-'+ lang).show();
             }
-        });
+        }
         $self.changed(activateLang);
     };
 
@@ -144,12 +128,12 @@
         $('.grp-modeltranslation a[data-lang="'+ changedLang +'"]')
             .parent().addClass('active')
                 .siblings().removeClass('active');
-        
     };
 
     $(function(){
         var mt = new modeltranslation();
         mt.load('body');
+        mt.activate(mt.langs[0]);
 
         $(GRP_ADD_HANDLER).bind('click.modeltranslation', function(){
             group = $(this).parents('.grp-group');
@@ -159,7 +143,6 @@
                 mt.activate(lang);
             }, 200);
         });
-  
     });
 
 }(django.jQuery || jQuery || $));
