@@ -41,6 +41,11 @@ USE_I18N = False
 USE_L10N = False
 USE_TZ = False
 
+gettext = lambda s: s
+LANGUAGES = (
+    ('fr', gettext('Francais')),
+    ('en', gettext('English')),
+)
 
 MEDIA_ROOT = join(PROJECT_ROOT, "media")
 MEDIA_URL = '/media/'
@@ -106,7 +111,11 @@ INSTALLED_APPS = (
     'grappelli',
     'grappellifit',
     'django.contrib.admin',
+    # Test apps
     'test_app',
+    'test_modeltranslation',
+    # Supported apps
+    'modeltranslation',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -146,4 +155,8 @@ LETTUCE_SERVER_PORT = 8782
 
 LETTUCE_AVOID_APPS = (
     'south',
+)
+
+MODELTRANSLATION_TRANSLATION_FILES = (
+    'test_modeltranslation.translation',
 )

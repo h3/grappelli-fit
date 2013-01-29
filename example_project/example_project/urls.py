@@ -8,6 +8,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     url(r'^$', redirect_to, {'url': '/admin/'}),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^grappelli/', include('grappelli.urls')),
     (r'^favicon.ico$', 'django.views.generic.simple.redirect_to', {
         'url': '%stest_app/img/favicon.ico' % settings.STATIC_URL}),
 )
