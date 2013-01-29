@@ -2,3 +2,7 @@
 *.swo
 *.pyc
 *.egg-info
+docs/_build/
+build/
+example_project/testdb.sqlite3
+grappellifit_test_env/
