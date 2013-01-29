@@ -60,7 +60,9 @@ Usage
 settings.py
 -----------
 
-Grappelli-fit works by overriding templates and static files for differents project, so the installation is pretty straight forward::
+Grappelli-fit works by overriding templates and static files for differents project, so the installation is pretty straight forward:
+
+.. code-block:: python
 
     STATICFILES_DIRS = (
        '/path/to/grappelli/static/',
