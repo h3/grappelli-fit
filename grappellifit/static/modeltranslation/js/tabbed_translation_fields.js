@@ -6,11 +6,16 @@
     var GRP_ROW = '.grp-row',
         GRP_BREADCRUMBS = '#grp-breadcrumbs',
         GRP_PAGE_TOOLS = '#grp-page-tools',
-        GRP_FOOTER = 'footer.grp-submit-row ul',
+        GRP_FOOTER = 'footer.grp-submit-row ul:first',
+        GRP_TABLE_HEADERS = '.grp-changelist-results table thead th',
+        GRP_TABLE_HEADERS_TEXT = '.grp-text span, .grp-text a',
         GRP_ADD_HANDLER = '.grp-add-handler';
 
+    var isChangelist = $('#grp-changelist').get(0) && true || false;
+    var isChangeForm = $('.grp-change-form').get(0) && true || false;
+
     var modeltranslation = function(){
-        this.langs  = ['en']
+        this.langs  = ['en'];
         this.fields = {en:[]};
         return this;
     };
@@ -47,10 +52,16 @@
             $self.createMainSwitch();
         }
 
-        $self.create();
+        if (isChangeForm) {
+            $self.createForChangeForm();
+        }
+        else {
+            $self.createForChangeList();
+        }
+
     }; // load
 
-    modeltranslation.prototype.create = function() {
+    modeltranslation.prototype.createForChangeForm = function() {
         var $self = this;
         var firstLang = $self.langs[0];
 
@@ -66,6 +77,30 @@
                 var label = field.el.parents(GRP_ROW).find('label[for="'+ field.el.attr('id') +'"]');
                 label.text(label.text().replace(/\ \[.+\]/, ''));
             });
+        });
+    };
+
+    modeltranslation.prototype.createForChangeList = function() {
+        var $self = this;
+        var firstLang = $self.langs[0];
+
+        // Horrible hack ..
+        $('.grp-modeltranslation:first').css('margin-right', '25px');
+
+        $.each($self.fields, function(lang, fields) {
+            $.each(fields, function(x, field){
+                var td = field.el.parents('td');
+                td.addClass('grp-modeltranslation-'+ lang)
+            });
+        });
+        $.each($(GRP_TABLE_HEADERS), function(x, th){
+            var th = $(th);
+            var txt = th.find(GRP_TABLE_HEADERS_TEXT).text();
+            if (/\[\w{2}\]/.test(txt)) {
+                var lang = txt.match(/\[(\w{2})\]/)
+                th.find(GRP_TABLE_HEADERS_TEXT).text(txt.replace(/\ \[.+\]/, ''));
+                th.addClass('grp-modeltranslation-'+ lang[1]);
+            }
         });
     };
 
