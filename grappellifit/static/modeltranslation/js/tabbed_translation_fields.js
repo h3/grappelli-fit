@@ -11,9 +11,6 @@
         GRP_TABLE_HEADERS_TEXT = '.grp-text span, .grp-text a',
         GRP_ADD_HANDLER = '.grp-add-handler';
 
-    var isChangelist = $('#grp-changelist').get(0) && true || false;
-    var isChangeForm = $('.grp-change-form').get(0) && true || false;
-
     var modeltranslation = function(){
         this.langs  = ['en'];
         this.fields = {en:[]};
@@ -52,11 +49,11 @@
             $self.createMainSwitch();
         }
 
-        if (isChangeForm) {
-            $self.createForChangeForm();
+        if ($('#grp-changelist-form').get(0)) {
+            $self.createForChangeList();
         }
         else {
-            $self.createForChangeList();
+            $self.createForChangeForm();
         }
 
     }; // load
