@@ -12,8 +12,8 @@
         GRP_ADD_HANDLER = '.grp-add-handler';
 
     var modeltranslation = function(){
-        this.langs  = ['en'];
-        this.fields = {en:[]};
+        this.langs  = [];
+        this.fields = {};
         return this;
     };
     
